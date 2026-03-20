@@ -1,5 +1,7 @@
 # 108-visual-prompt-studio — Production Edition
 
+[中文说明](./README.zh-CN.md)
+
 This package is a production-ready Claude Code skill plus a hardened TypeScript runner.
 
 ## Install in Claude Code
