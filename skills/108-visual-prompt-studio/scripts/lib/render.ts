@@ -54,24 +54,38 @@ function getLabels(language: "zh" | "en") {
 }
 
 function localizeTaskType(value: string, language: "zh" | "en"): string {
-  if (language !== "zh") return value;
+  if (language === "zh") {
+    if (value === "portrait_prompt") return "写真";
+    if (value === "ui_prompt") return "UI";
+    if (value === "poster_prompt") return "海报";
+    if (value === "promo_prompt") return "宣传图";
+    if (value === "custom_prompt") return "用户自定义";
+    return value;
+  }
 
-  if (value === "portrait_prompt") return "写真";
+  if (value === "portrait_prompt") return "Portrait";
   if (value === "ui_prompt") return "UI";
-  if (value === "poster_prompt") return "海报";
-  if (value === "promo_prompt") return "宣传图";
-  if (value === "custom_prompt") return "用户自定义";
+  if (value === "poster_prompt") return "Poster";
+  if (value === "promo_prompt") return "Promo Visual";
+  if (value === "custom_prompt") return "Custom";
   return value;
 }
 
 function localizeRole(value: string, language: "zh" | "en"): string {
-  if (language !== "zh") return value;
+  if (language === "zh") {
+    if (value === "photographer") return "摄影师";
+    if (value === "ui_designer") return "前端 UI 设计师";
+    if (value === "operator") return "运营专家";
+    if (value === "growth_hacker") return "增长黑客";
+    if (value === "custom_role") return "用户自定义";
+    return value;
+  }
 
-  if (value === "photographer") return "摄影师";
-  if (value === "ui_designer") return "前端 UI 设计师";
-  if (value === "operator") return "运营专家";
-  if (value === "growth_hacker") return "增长黑客";
-  if (value === "custom_role") return "用户自定义";
+  if (value === "photographer") return "Photographer";
+  if (value === "ui_designer") return "UI Designer";
+  if (value === "operator") return "Operator";
+  if (value === "growth_hacker") return "Growth Hacker";
+  if (value === "custom_role") return "Custom";
   return value;
 }
 
