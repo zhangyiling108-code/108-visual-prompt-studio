@@ -17,6 +17,10 @@ function getLabels(language: "zh" | "en") {
       copyBlock: "可直接复制提示词",
       field: "字段",
       content: "内容",
+      taskType: "提示词类型",
+      selectedRole: "角色",
+      language: "输出语言",
+      analysisSummary: "分析摘要",
       finalPrompt: "最终提示词",
       negativePrompt: "负面提示词",
       colorNotes: "配色说明",
@@ -34,6 +38,10 @@ function getLabels(language: "zh" | "en") {
     copyBlock: "Copy-ready Prompt",
     field: "Field",
     content: "Content",
+    taskType: "Task Type",
+    selectedRole: "Selected Role",
+    language: "Language",
+    analysisSummary: "Analysis Summary",
     finalPrompt: "Final Prompt",
     negativePrompt: "Negative Prompt",
     colorNotes: "Color Notes",
@@ -43,6 +51,38 @@ function getLabels(language: "zh" | "en") {
     inCopyBlock: "Included in the copy-ready block below",
     na: "N/A",
   };
+}
+
+function localizeTaskType(value: string, language: "zh" | "en"): string {
+  if (language !== "zh") return value;
+
+  if (value === "portrait_prompt") return "写真";
+  if (value === "ui_prompt") return "UI";
+  if (value === "poster_prompt") return "海报";
+  if (value === "promo_prompt") return "宣传图";
+  if (value === "custom_prompt") return "用户自定义";
+  return value;
+}
+
+function localizeRole(value: string, language: "zh" | "en"): string {
+  if (language !== "zh") return value;
+
+  if (value === "photographer") return "摄影师";
+  if (value === "ui_designer") return "前端 UI 设计师";
+  if (value === "operator") return "运营专家";
+  if (value === "growth_hacker") return "增长黑客";
+  if (value === "custom_role") return "用户自定义";
+  return value;
+}
+
+function localizeLanguage(value: "zh" | "en", language: "zh" | "en"): string {
+  if (language === "zh") {
+    if (value === "zh") return "中文";
+    if (value === "en") return "英文";
+  }
+
+  if (value === "zh") return "Chinese";
+  return "English";
 }
 
 export function renderPromptPackageTable(result: FinalResult): string {
@@ -60,6 +100,10 @@ export function renderPromptPackageTable(result: FinalResult): string {
     "",
     `| ${labels.field} | ${labels.content} |`,
     "|---|---|",
+    `| ${labels.taskType} | ${escapeTableCell(localizeTaskType(result.task_type, result.language))} |`,
+    `| ${labels.selectedRole} | ${escapeTableCell(localizeRole(result.selected_role, result.language))} |`,
+    `| ${labels.language} | ${escapeTableCell(localizeLanguage(result.language, result.language))} |`,
+    `| ${labels.analysisSummary} | ${joinLines(result.analysis_summary, labels.na)} |`,
     `| ${labels.finalPrompt} | ${labels.inCopyBlock} |`,
     `| ${labels.negativePrompt} | ${labels.inCopyBlock} |`,
     `| ${labels.colorNotes} | ${joinLines(result.color_notes, labels.na)} |`,
