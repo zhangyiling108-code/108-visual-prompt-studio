@@ -46,17 +46,20 @@ export interface VisionResult {
 }
 
 export interface IntentResult {
-  task_type: "portrait_prompt" | "ui_prompt" | "promo_prompt";
-  selected_role: "photographer" | "ui_designer" | "growth_operator";
+  task_type: "portrait_prompt" | "ui_prompt" | "poster_prompt" | "promo_prompt" | "custom_prompt";
+  selected_role: "photographer" | "ui_designer" | "operator" | "growth_hacker" | "custom_role";
   language: "zh" | "en";
   focus: string[];
   user_goal_summary: string;
   assumptions: string[];
+  custom_type_notes: string;
+  custom_role_notes: string;
 }
 
 export interface FinalResult {
   task_type: string;
   selected_role: string;
+  language: "zh" | "en";
   analysis_summary: string[];
   final_prompt: string;
   negative_prompt: string;
@@ -64,6 +67,7 @@ export interface FinalResult {
   composition_notes: string[];
   layout_notes: string[];
   conversion_notes: string[];
+  copy_ready_prompt: string;
 }
 
 export function validateVisionResult(input: unknown): VisionResult {
@@ -97,10 +101,10 @@ export function validateIntentResult(input: unknown): IntentResult {
   const selectedRole = requireString(obj, "selected_role", "intent_result");
   const language = requireString(obj, "language", "intent_result");
 
-  if (!["portrait_prompt", "ui_prompt", "promo_prompt"].includes(taskType)) {
+  if (!["portrait_prompt", "ui_prompt", "poster_prompt", "promo_prompt", "custom_prompt"].includes(taskType)) {
     throw new Error("intent_result.task_type is invalid.");
   }
-  if (!["photographer", "ui_designer", "growth_operator"].includes(selectedRole)) {
+  if (!["photographer", "ui_designer", "operator", "growth_hacker", "custom_role"].includes(selectedRole)) {
     throw new Error("intent_result.selected_role is invalid.");
   }
   if (!["zh", "en"].includes(language)) {
@@ -114,14 +118,22 @@ export function validateIntentResult(input: unknown): IntentResult {
     focus: requireStringArray(obj, "focus", "intent_result"),
     user_goal_summary: requireString(obj, "user_goal_summary", "intent_result"),
     assumptions: requireStringArray(obj, "assumptions", "intent_result"),
+    custom_type_notes: typeof obj["custom_type_notes"] === "string" ? obj["custom_type_notes"] as string : "",
+    custom_role_notes: typeof obj["custom_role_notes"] === "string" ? obj["custom_role_notes"] as string : "",
   };
 }
 
 export function validateFinalResult(input: unknown): FinalResult {
   const obj = assertObject(input, "final_result");
+  const language = requireString(obj, "language", "final_result");
+  if (!["zh", "en"].includes(language)) {
+    throw new Error("final_result.language is invalid.");
+  }
+
   return {
     task_type: requireString(obj, "task_type", "final_result"),
     selected_role: requireString(obj, "selected_role", "final_result"),
+    language: language as FinalResult["language"],
     analysis_summary: requireStringArray(obj, "analysis_summary", "final_result"),
     final_prompt: requireString(obj, "final_prompt", "final_result"),
     negative_prompt: typeof obj["negative_prompt"] === "string" ? obj["negative_prompt"] as string : "",
@@ -129,5 +141,6 @@ export function validateFinalResult(input: unknown): FinalResult {
     composition_notes: isStringArray(obj["composition_notes"]) ? obj["composition_notes"] as string[] : [],
     layout_notes: isStringArray(obj["layout_notes"]) ? obj["layout_notes"] as string[] : [],
     conversion_notes: isStringArray(obj["conversion_notes"]) ? obj["conversion_notes"] as string[] : [],
+    copy_ready_prompt: requireString(obj, "copy_ready_prompt", "final_result"),
   };
 }

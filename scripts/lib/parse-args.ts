@@ -7,6 +7,7 @@ export interface CliArgs {
   timeoutMs?: number;
   retries?: number;
   verbose?: boolean;
+  json?: boolean;
 }
 
 export function parseArgs(argv: string[]): CliArgs {
@@ -23,6 +24,7 @@ export function parseArgs(argv: string[]): CliArgs {
     if (key === "--timeout-ms" && value) result.timeoutMs = Number(value);
     if (key === "--retries" && value) result.retries = Number(value);
     if (key === "--verbose") result.verbose = true;
+    if (key === "--json") result.json = true;
   }
   return result;
 }

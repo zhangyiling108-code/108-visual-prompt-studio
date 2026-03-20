@@ -6,6 +6,7 @@ import { parseArgs } from "./lib/parse-args.js";
 import { extractJsonObject, parseJson } from "./lib/parse-json.js";
 import { chooseProvider, getProviderConfig } from "./lib/provider.js";
 import { loadPrompt, loadRolePrompt } from "./lib/prompts.js";
+import { renderPromptPackageTable } from "./lib/render.js";
 import { validateFinalResult, validateIntentResult, validateVisionResult } from "./lib/schema.js";
 import { sleep } from "./lib/sleep.js";
 
@@ -109,7 +110,7 @@ async function main(): Promise<void> {
   );
 
   const finalJson = validateFinalResult(parseJson(extractJsonObject(finalRaw)));
-  const output = JSON.stringify(finalJson, null, 2);
+  const output = args.json ? JSON.stringify(finalJson, null, 2) : renderPromptPackageTable(finalJson);
 
   if (args.out) {
     await fs.mkdir(path.dirname(args.out), { recursive: true });

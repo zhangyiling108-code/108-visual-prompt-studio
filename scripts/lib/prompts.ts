@@ -13,6 +13,8 @@ export async function loadPrompt(fileName: string): Promise<string> {
 export async function loadRolePrompt(role: string): Promise<string> {
   if (role === "photographer") return loadPrompt("role-photographer.md");
   if (role === "ui_designer") return loadPrompt("role-ui-designer.md");
-  if (role === "growth_operator") return loadPrompt("role-growth-operator.md");
+  if (role === "operator") return loadPrompt("role-growth-operator.md");
+  if (role === "growth_hacker") return loadPrompt("role-growth-hacker.md");
+  if (role === "custom_role") return loadPrompt("role-custom.md");
   throw new Error(`Unknown role: ${role}`);
 }
