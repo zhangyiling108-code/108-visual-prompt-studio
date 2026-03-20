@@ -1,0 +1,21 @@
+{
+  "name": "108-visual-prompt-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:zhangyiling108-code/108-visual-prompt-studio.git"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/scripts/main.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "typescript": "^5.7.2"
+  }
+}
