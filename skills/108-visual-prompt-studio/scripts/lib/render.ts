@@ -9,6 +9,11 @@ function joinLines(items: string[], emptyText: string): string {
   return items.map((item) => escapeTableCell(item)).join("<br>");
 }
 
+function optionalText(value: string, emptyText: string): string {
+  const trimmed = value.trim();
+  return trimmed ? escapeTableCell(trimmed) : emptyText;
+}
+
 function getLabels(language: "zh" | "en") {
   if (language === "zh") {
     return {
@@ -27,7 +32,7 @@ function getLabels(language: "zh" | "en") {
       compositionNotes: "构图说明",
       layoutNotes: "布局说明",
       conversionNotes: "转化说明",
-      inCopyBlock: "已整理到下方“可直接复制提示词”",
+      copyReadyPrompt: "可复制完整提示词",
       na: "不适用",
     };
   }
@@ -48,7 +53,7 @@ function getLabels(language: "zh" | "en") {
     compositionNotes: "Composition Notes",
     layoutNotes: "Layout Notes",
     conversionNotes: "Conversion Notes",
-    inCopyBlock: "Included in the copy-ready block below",
+    copyReadyPrompt: "Copy-ready Prompt",
     na: "N/A",
   };
 }
@@ -118,12 +123,13 @@ export function renderPromptPackageTable(result: FinalResult): string {
     `| ${labels.selectedRole} | ${escapeTableCell(localizeRole(result.selected_role, result.language))} |`,
     `| ${labels.language} | ${escapeTableCell(localizeLanguage(result.language, result.language))} |`,
     `| ${labels.analysisSummary} | ${joinLines(result.analysis_summary, labels.na)} |`,
-    `| ${labels.finalPrompt} | ${labels.inCopyBlock} |`,
-    `| ${labels.negativePrompt} | ${labels.inCopyBlock} |`,
+    `| ${labels.finalPrompt} | ${optionalText(result.final_prompt, labels.na)} |`,
+    `| ${labels.negativePrompt} | ${optionalText(result.negative_prompt, labels.na)} |`,
     `| ${labels.colorNotes} | ${joinLines(result.color_notes, labels.na)} |`,
     `| ${labels.compositionNotes} | ${joinLines(result.composition_notes, labels.na)} |`,
     `| ${labels.layoutNotes} | ${joinLines(result.layout_notes, labels.na)} |`,
     `| ${labels.conversionNotes} | ${joinLines(result.conversion_notes, labels.na)} |`,
+    `| ${labels.copyReadyPrompt} | ${optionalText(result.copy_ready_prompt, labels.na)} |`,
     "",
     `### ${labels.copyBlock}`,
     "```text",
