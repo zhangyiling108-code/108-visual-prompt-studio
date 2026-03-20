@@ -1,36 +1,37 @@
 import type { FinalResult } from "./schema.js";
 
-function joinLines(items: string[]): string {
-  if (!items.length) return "-";
-  return items.map((item) => item.replace(/\|/g, "\\|")).join("<br>");
+function escapeTableCell(value: string): string {
+  return value.replace(/\|/g, "\\|").replace(/\n/g, "<br>");
 }
 
-function textCell(value: string): string {
-  return value && value.trim() ? value.replace(/\|/g, "\\|").replace(/\n/g, "<br>") : "-";
+function joinLines(items: string[], emptyText: string): string {
+  if (!items.length) return emptyText;
+  return items.map((item) => escapeTableCell(item)).join("<br>");
 }
 
 function getLabels(language: "zh" | "en") {
   if (language === "zh") {
     return {
-      promptPackage: "提示词包",
-      analysisSummary: "分析摘要",
-      copyReadyPrompt: "可复制提示词",
+      title: "提示词包",
+      summary: "分析摘要",
+      copyBlock: "可直接复制提示词",
       field: "字段",
       content: "内容",
       finalPrompt: "最终提示词",
       negativePrompt: "负面提示词",
-      colorNotes: "配色建议",
-      compositionNotes: "构图建议",
-      layoutNotes: "布局建议",
-      conversionNotes: "转化建议",
-      includedInCopyBlock: "已整理到下方“可复制提示词”区域",
+      colorNotes: "配色说明",
+      compositionNotes: "构图说明",
+      layoutNotes: "布局说明",
+      conversionNotes: "转化说明",
+      inCopyBlock: "已整理到下方“可直接复制提示词”",
+      na: "不适用",
     };
   }
 
   return {
-    promptPackage: "Prompt Package",
-    analysisSummary: "Analysis Summary",
-    copyReadyPrompt: "Copy-ready Prompt",
+    title: "Prompt Package",
+    summary: "Analysis Summary",
+    copyBlock: "Copy-ready Prompt",
     field: "Field",
     content: "Content",
     finalPrompt: "Final Prompt",
@@ -39,7 +40,8 @@ function getLabels(language: "zh" | "en") {
     compositionNotes: "Composition Notes",
     layoutNotes: "Layout Notes",
     conversionNotes: "Conversion Notes",
-    includedInCopyBlock: "Included in the copy-ready prompt block below",
+    inCopyBlock: "Included in the copy-ready block below",
+    na: "N/A",
   };
 }
 
@@ -48,27 +50,27 @@ export function renderPromptPackageTable(result: FinalResult): string {
 
   const summary = result.analysis_summary.length
     ? result.analysis_summary.map((item) => `- ${item}`).join("\n")
-    : "-";
+    : `- ${labels.na}`;
 
   return [
-    `## ${labels.promptPackage}`,
+    `## ${labels.title}`,
     "",
-    `### ${labels.analysisSummary}`,
+    `### ${labels.summary}`,
     summary,
     "",
     `| ${labels.field} | ${labels.content} |`,
     "|---|---|",
-    `| ${labels.finalPrompt} | ${labels.includedInCopyBlock} |`,
-    `| ${labels.negativePrompt} | ${textCell(result.negative_prompt)} |`,
-    `| ${labels.colorNotes} | ${joinLines(result.color_notes)} |`,
-    `| ${labels.compositionNotes} | ${joinLines(result.composition_notes)} |`,
-    `| ${labels.layoutNotes} | ${joinLines(result.layout_notes)} |`,
-    `| ${labels.conversionNotes} | ${joinLines(result.conversion_notes)} |`,
+    `| ${labels.finalPrompt} | ${labels.inCopyBlock} |`,
+    `| ${labels.negativePrompt} | ${labels.inCopyBlock} |`,
+    `| ${labels.colorNotes} | ${joinLines(result.color_notes, labels.na)} |`,
+    `| ${labels.compositionNotes} | ${joinLines(result.composition_notes, labels.na)} |`,
+    `| ${labels.layoutNotes} | ${joinLines(result.layout_notes, labels.na)} |`,
+    `| ${labels.conversionNotes} | ${joinLines(result.conversion_notes, labels.na)} |`,
     "",
-    `### ${labels.copyReadyPrompt}`,
+    `### ${labels.copyBlock}`,
     "```text",
     result.copy_ready_prompt,
     "```",
-    ""
+    "",
   ].join("\n");
 }

@@ -13,13 +13,17 @@ function assertObject(value: unknown, name: string): JsonRecord {
 
 function requireString(obj: JsonRecord, key: string, ctx: string): string {
   const value = obj[key];
-  if (typeof value !== "string") throw new Error(`${ctx}.${key} must be a string.`);
+  if (typeof value !== "string") {
+    throw new Error(`${ctx}.${key} must be a string.`);
+  }
   return value;
 }
 
 function requireStringArray(obj: JsonRecord, key: string, ctx: string): string[] {
   const value = obj[key];
-  if (!isStringArray(value)) throw new Error(`${ctx}.${key} must be a string array.`);
+  if (!isStringArray(value)) {
+    throw new Error(`${ctx}.${key} must be a string array.`);
+  }
   return value;
 }
 
@@ -104,9 +108,11 @@ export function validateIntentResult(input: unknown): IntentResult {
   if (!["portrait_prompt", "ui_prompt", "poster_prompt", "promo_prompt", "custom_prompt"].includes(taskType)) {
     throw new Error("intent_result.task_type is invalid.");
   }
+
   if (!["photographer", "ui_designer", "operator", "growth_hacker", "custom_role"].includes(selectedRole)) {
     throw new Error("intent_result.selected_role is invalid.");
   }
+
   if (!["zh", "en"].includes(language)) {
     throw new Error("intent_result.language is invalid.");
   }
@@ -118,14 +124,15 @@ export function validateIntentResult(input: unknown): IntentResult {
     focus: requireStringArray(obj, "focus", "intent_result"),
     user_goal_summary: requireString(obj, "user_goal_summary", "intent_result"),
     assumptions: requireStringArray(obj, "assumptions", "intent_result"),
-    custom_type_notes: typeof obj["custom_type_notes"] === "string" ? obj["custom_type_notes"] as string : "",
-    custom_role_notes: typeof obj["custom_role_notes"] === "string" ? obj["custom_role_notes"] as string : "",
+    custom_type_notes: typeof obj["custom_type_notes"] === "string" ? (obj["custom_type_notes"] as string) : "",
+    custom_role_notes: typeof obj["custom_role_notes"] === "string" ? (obj["custom_role_notes"] as string) : "",
   };
 }
 
 export function validateFinalResult(input: unknown): FinalResult {
   const obj = assertObject(input, "final_result");
   const language = requireString(obj, "language", "final_result");
+
   if (!["zh", "en"].includes(language)) {
     throw new Error("final_result.language is invalid.");
   }
@@ -136,11 +143,11 @@ export function validateFinalResult(input: unknown): FinalResult {
     language: language as FinalResult["language"],
     analysis_summary: requireStringArray(obj, "analysis_summary", "final_result"),
     final_prompt: requireString(obj, "final_prompt", "final_result"),
-    negative_prompt: typeof obj["negative_prompt"] === "string" ? obj["negative_prompt"] as string : "",
-    color_notes: isStringArray(obj["color_notes"]) ? obj["color_notes"] as string[] : [],
-    composition_notes: isStringArray(obj["composition_notes"]) ? obj["composition_notes"] as string[] : [],
-    layout_notes: isStringArray(obj["layout_notes"]) ? obj["layout_notes"] as string[] : [],
-    conversion_notes: isStringArray(obj["conversion_notes"]) ? obj["conversion_notes"] as string[] : [],
+    negative_prompt: typeof obj["negative_prompt"] === "string" ? (obj["negative_prompt"] as string) : "",
+    color_notes: isStringArray(obj["color_notes"]) ? (obj["color_notes"] as string[]) : [],
+    composition_notes: isStringArray(obj["composition_notes"]) ? (obj["composition_notes"] as string[]) : [],
+    layout_notes: isStringArray(obj["layout_notes"]) ? (obj["layout_notes"] as string[]) : [],
+    conversion_notes: isStringArray(obj["conversion_notes"]) ? (obj["conversion_notes"] as string[]) : [],
     copy_ready_prompt: requireString(obj, "copy_ready_prompt", "final_result"),
   };
 }

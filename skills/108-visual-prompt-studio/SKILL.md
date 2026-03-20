@@ -1,7 +1,7 @@
 ---
 name: 108-visual-prompt-studio
 description: Analyze a user-provided image and the user's request, let the user choose prompt type, expert role, and output language before work begins, then return a structured prompt package in table format plus one copy-ready prompt block for portrait photography, UI, posters, promo visuals, or custom tasks.
-version: 1.5.0
+version: 1.5.1
 effort: medium
 metadata:
   openclaw: true
@@ -24,6 +24,7 @@ Use this skill when the user:
 ## What this skill does
 
 This skill does **not** generate the final image.
+
 It converts:
 - a reference image
 - the user's stated goal
@@ -126,6 +127,15 @@ If the user selects `English` / `en`, the final user-facing output must be fully
 
 Do not mix languages in the final user-facing response unless the user explicitly asks for bilingual output.
 
+## Direct-copy rule
+
+The final user-facing response must include **one single copy-ready prompt block**.
+
+Do not force the user to reconstruct the prompt by copying multiple separate table cells.
+
+If the user selects `zh`, that copy-ready prompt block must be fully in Chinese.  
+If the user selects `en`, that copy-ready prompt block must be fully in English.
+
 ## Output contract
 
 The final answer should be returned as:
@@ -149,6 +159,7 @@ The response should contain fields such as:
 ## Output format rule
 
 Do **not** return raw JSON to end users by default.
+
 Return a user-friendly Markdown response, with:
 - the main Prompt Package rendered as a table
 - one copy-ready block that the user can copy at once

@@ -110,12 +110,22 @@ async function main(): Promise<void> {
   );
 
   const finalJson = validateFinalResult(parseJson(extractJsonObject(finalRaw)));
-  const output = args.json ? JSON.stringify(finalJson, null, 2) : renderPromptPackageTable(finalJson);
+
+  // Enforce routed language if the model accidentally drifts.
+  if (finalJson.language !== intentJson.language) {
+    finalJson.language = intentJson.language;
+  }
+
+  const output = args.json
+    ? JSON.stringify(finalJson, null, 2)
+    : renderPromptPackageTable(finalJson);
 
   if (args.out) {
     await fs.mkdir(path.dirname(args.out), { recursive: true });
     await fs.writeFile(args.out, output + "\n", "utf-8");
-    if (args.verbose) console.error(`[108-visual-prompt-studio] Wrote output to ${args.out}`);
+    if (args.verbose) {
+      console.error(`[108-visual-prompt-studio] Wrote output to ${args.out}`);
+    }
   } else {
     process.stdout.write(output + "\n");
   }
@@ -147,13 +157,20 @@ async function callWithRetry<T>(
 
   for (let attempt = 0; attempt <= retries; attempt += 1) {
     try {
-      if (verbose) console.error(`[108-visual-prompt-studio] ${stage} attempt ${attempt + 1}/${retries + 1}`);
+      if (verbose) {
+        console.error(`[108-visual-prompt-studio] ${stage} attempt ${attempt + 1}/${retries + 1}`);
+      }
       return await fn();
     } catch (error) {
       lastError = error;
       if (attempt === retries) break;
+
       const delayMs = Math.min(1000 * (2 ** attempt), 4000);
-      if (verbose) console.error(`[108-visual-prompt-studio] ${stage} retrying in ${delayMs}ms: ${stringifyError(error)}`);
+      if (verbose) {
+        console.error(
+          `[108-visual-prompt-studio] ${stage} retrying in ${delayMs}ms: ${stringifyError(error)}`
+        );
+      }
       await sleep(delayMs);
     }
   }
@@ -174,6 +191,9 @@ function stringifyError(error: unknown): string {
 }
 
 main().catch((error) => {
-  console.error("[108-visual-prompt-studio] Failed:", error instanceof Error ? error.message : String(error));
+  console.error(
+    "[108-visual-prompt-studio] Failed:",
+    error instanceof Error ? error.message : String(error)
+  );
   process.exit(1);
 });
